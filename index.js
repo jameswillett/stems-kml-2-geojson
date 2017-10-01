@@ -16,7 +16,7 @@ const jsonArray = files.filter(file => /.*\.kml/.test(file))
 .reduce((acc, cur) => acc.concat(cur), [])
 
 //removes 'point' features because theyre stupid
-.filter(file => file.geometry.type != 'Point')
+.filter(feature => feature.geometry.type != 'Point')
 
 //writes itttttttttt
 fs.writeFile('master.geojson', JSON.stringify(jsonArray), (err) => {
