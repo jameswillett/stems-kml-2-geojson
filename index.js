@@ -3,36 +3,39 @@ const finder = require('fs-finder');
 const fs = require('fs');
 const tj = require('togeojson');
 
-const jsonArray = [];
-
+//grabs ALL files in ./kml
 const files = finder.in(`${__dirname}/kml`).findFiles();
 
-files.map(file => {
-  if(/.*\.kml/.test(file)){
-    jsonArray.push(
-      tj.kml(
-        new DOMParser().parseFromString(
-          fs.readFileSync(file,'utf8')
-        )
-      )
-    );
-  }
+//initialize + filters array to only include *.kml files
+const jsonArray = files.filter(file => {
+  return /.*\.kml/.test(file)
 })
 
+//where the magic happens. kml to geojson here and we only care about the features property
+.map(file => {
+  return tj.kml(new DOMParser().parseFromString(fs.readFileSync(file,'utf8'))).features
+})
+
+
+//flattens array (because some cities have multiple features)
+.reduce((acc, cur) => acc.concat(cur), [])
+
+//removes 'point' features because theyre stupid
+.filter(file => {
+  return file.geometry.type != 'Point'
+})
+
+
+/*
 const masterJson = {
-  type: 'FeatureCollection',
-  features: []
+  type: 'FeatureCollection'
 }
 
-jsonArray.map(onfleetTeam => {
-  onfleetTeam.features.map(feature => {
-    if (feature.geometry.type != 'Point'){
-      masterJson.features.push(feature)
-    }
-  })
-})
+masterJson.features = jsonArray.filter(feature => {
+  return
+})*/
 
-fs.writeFile('master.geojson', JSON.stringify(masterJson), (err) => {
+fs.writeFile('master.geojson', JSON.stringify(jsonArray), (err) => {
   if(err){
     console.log(err)
   }
