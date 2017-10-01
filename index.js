@@ -16,7 +16,6 @@ const jsonArray = files.filter(file => {
   return tj.kml(new DOMParser().parseFromString(fs.readFileSync(file,'utf8'))).features
 })
 
-
 //flattens array (because some cities have multiple features)
 .reduce((acc, cur) => acc.concat(cur), [])
 
@@ -25,16 +24,7 @@ const jsonArray = files.filter(file => {
   return file.geometry.type != 'Point'
 })
 
-
-/*
-const masterJson = {
-  type: 'FeatureCollection'
-}
-
-masterJson.features = jsonArray.filter(feature => {
-  return
-})*/
-
+//writes itttttttttt
 fs.writeFile('master.geojson', JSON.stringify(jsonArray), (err) => {
   if(err){
     console.log(err)
