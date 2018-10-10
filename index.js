@@ -18,6 +18,15 @@ const jsonArray = files.filter(file => /.*\.kml/.test(file))
 //removes 'point' features because theyre stupid
 .filter(feature => feature.geometry.type != 'Point')
 
+.map(x => ({
+  ...x,
+  geometry: {
+    ...x.geometry,
+    coordinates: [
+      x.geometry.coordinates.map(y => y.map(z => z.filter((_, i) => i < 2)))
+    ],
+  },
+}));
 //writes itttttttttt
 fs.writeFile('master.geojson', JSON.stringify(jsonArray), (err) => {
   if(err){
