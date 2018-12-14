@@ -14,32 +14,26 @@ const jsonArray = files.filter(file => /.*\.kml/.test(file))
   .map(file => tj.kml(new DOMParser().parseFromString(fs.readFileSync(file,'utf8'))).features)
 
   //flattens array (because some cities have multiple features)
-  .reduce((acc, cur) => acc.concat(cur), [])
+  .reduce(R.concat, [])
 
   //removes 'point' features because theyre stupid
-  .filter(feature => feature.geometry.type != 'Point')
 
-  //this is just to remove altitude. dont use for onfleet overlays. can be improved with R.path and R.take probably
+  .filter(
+    R.pathSatisfies(
+      R.complement(R.equals('Point')),
+      ['geometry', 'type'],
+    )
+  )
 
-  /*
-    .map(x => ({
-    ...x,
-    geometry: {
-      ...x.geometry,
-      coordinates: [
-        x.geometry.coordinates.map(y => y.map(z => z.filter((_, i) => i < 2)))
-      ],
-    },
-  }))
-  */
+  //this is just to remove altitude. dont use for onfleet overlays.
+
+  // .map(R.over(R.lensPath(['geometry','coordinates']), R.map(R.map(R.take(2)))))
 
   // remove properties object. maybe change this if we want to keep styling later
 
-  .map(R.assoc("properties", {}))
+  .map(R.assoc("properties", {}));
 
 //writes itttttttttt
 fs.writeFile('master.geojson', `{"type":"FeatureCollection","features":${JSON.stringify(jsonArray)}}`, (err) => {
-  if(err){
-    console.log(err)
-  }
+  if (err) console.log(err)
 })
