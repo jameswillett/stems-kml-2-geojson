@@ -46,7 +46,7 @@ const stringifiedGeoJSON = R.pipe(
   R.assoc('features', R.__, { type: 'FeatureCollection' }),
 
   // strigify that shit
-  JSON.stringify,
+  R.toString,
 )(files)
 
 
