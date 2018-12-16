@@ -32,7 +32,12 @@ const stringifiedGeoJSON = R.pipe(
   ),
 
   //this is just to remove altitude.
-  R.map(R.over(R.lensPath(['geometry','coordinates']), R.map(R.map(R.take(2))))),
+  R.map(
+    R.over(
+      R.lensPath(['geometry','coordinates']),
+      R.map(R.map(R.take(2)))
+    )
+  ),
 
   // remove properties object. maybe change this if we want to keep styling later
   R.map(R.assoc("properties", {})),
