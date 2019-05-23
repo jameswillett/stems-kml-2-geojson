@@ -32,11 +32,15 @@ const stringifiedGeoJSON = R.pipe(
   ),
 
   //this is just to remove altitude.
-  R.map(
-    R.over(
-      R.lensPath(['geometry','coordinates']),
-      R.map(R.map(R.take(2)))
-    )
+  R.ifElse(
+    () => process.argv[2] === 'true',
+    R.identity,
+    R.map(
+      R.over(
+        R.lensPath(['geometry','coordinates']),
+        R.map(R.map(R.take(2)))
+      )
+    ),
   ),
 
   // remove properties object. maybe change this if we want to keep styling later
@@ -51,6 +55,6 @@ const stringifiedGeoJSON = R.pipe(
 
 
 //writes itttttttttt
-fs.writeFile('master.geojson', stringifiedGeoJSON, (err) => {
+fs.writeFile(`${process.argv[3] || 'master'}.geojson`, stringifiedGeoJSON, (err) => {
   if (err) console.log(err)
 })
