@@ -20,7 +20,8 @@ const stringifiedGeoJSON = R.pipe(
     )
   ),
 
-  R.tap(console.log),
+  // TODO: if kml feature type is `LineString` change it to `Polygon` and
+  // nest the coordinates array in another array.
 
   //flattens array (because some cities have multiple features)
   R.flatten,
