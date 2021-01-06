@@ -20,6 +20,8 @@ const stringifiedGeoJSON = R.pipe(
     )
   ),
 
+  R.tap(console.log),
+
   //flattens array (because some cities have multiple features)
   R.flatten,
 
